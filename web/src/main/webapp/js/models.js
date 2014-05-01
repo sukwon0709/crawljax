@@ -147,7 +147,7 @@ App.Configurations.reopenClass({
 			data: JSON.stringify(config, this.cleanJSON),
 			dataType: 'json',
 			context: config,
-			success: function(response){ 
+			success: function(response){
 				if (callback !== undefined) callback(config); 
 			}
 		});
