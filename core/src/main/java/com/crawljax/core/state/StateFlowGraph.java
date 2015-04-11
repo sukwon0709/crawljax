@@ -2,6 +2,7 @@ package com.crawljax.core.state;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 
 import java.util.List;
@@ -107,4 +108,10 @@ public interface StateFlowGraph {
 	 */
 	ImmutableSet<StateVertex> getOutgoingStates(StateVertex stateVertix);
 
+	/**
+	 * soh: Used to convert sfg into dot files.
+	 *
+	 * @return underlying graph representation used by JGraphT.
+	 */
+	public Graph getInternalGraph();
 }

@@ -22,6 +22,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.math.stat.descriptive.moment.Mean;
 import org.jgrapht.DirectedGraph;
+import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.alg.KShortestPaths;
@@ -355,6 +356,10 @@ public class InMemoryStateFlowGraph implements Serializable, StateFlowGraph {
 		}
 
 		return ImmutableSet.copyOf(result);
+	}
+
+	public Graph getInternalGraph() {
+		return sfg;
 	}
 
 }
