@@ -19,5 +19,10 @@
 			<artifactId>crawloverview-plugin</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.crawljax.plugins</groupId>
+			<artifactId>crawlgraphviz-plugin</artifactId>
+			<version>3.7-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 </project>

@@ -61,5 +61,6 @@
 	<modules>
 		<module>crawloverview-plugin</module>
 		<module>test-plugin</module>
-  </modules>
+		<module>crawlgraphviz-plugin</module>
+	</modules>
 </project>
