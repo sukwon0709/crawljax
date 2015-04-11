@@ -10,6 +10,10 @@ public class GraphvizEdgeNameProvider implements EdgeNameProvider<Eventable> {
     @Override
     public String getEdgeName(Eventable eventable) {
         String eventType = eventable.getEventType().name();
-        return eventType + " " + eventable.getIdentification().getValue();
+        String elementTag = eventable.getElement().getTag();
+        String elementText = eventable.getElement().getText();
+        String elementId = eventable.getElement().getElementId();
+        String elementName = "<" + elementTag + " id=" + elementId + " text=" + elementText + ">";
+        return eventType + " " + elementName;
     }
 }
