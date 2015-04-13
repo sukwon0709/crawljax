@@ -732,6 +732,9 @@ public final class WebDriverBackedEmbeddedBrowser implements EmbeddedBrowser {
 				values.add(new InputValue(option.getText(), true));
 			}
 
+		} else if (inputString.equals("email")) {
+			// HTML5 input type
+			values.add(new InputValue("alice@test.org", true));
 		}
 	}
 

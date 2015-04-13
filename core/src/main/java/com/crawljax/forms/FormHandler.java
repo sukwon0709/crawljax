@@ -49,7 +49,7 @@ public class FormHandler {
 	}
 
 	private static final String[] ALLOWED_INPUT_TYPES =
-	{ "text", "radio", "checkbox", "password" };
+	{ "text", "radio", "checkbox", "password", "email" };
 
 	/**
 	 * Fills in the element with the InputValues for input TODO: improve this by using WebDriver
@@ -72,6 +72,8 @@ public class FormHandler {
 				handleRadioSwitches(element, input);
 			} else if (input.getType().startsWith("select")) {
 				handleSelectBoxes(element, input);
+			} else if (input.getType().equals("email")) {
+				handleText(element, input);
 			}
 		} catch (BrowserConnectionException e) {
 			throw e;
