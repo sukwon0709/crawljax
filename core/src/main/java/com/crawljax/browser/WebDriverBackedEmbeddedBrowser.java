@@ -26,24 +26,16 @@ import com.crawljax.util.DomUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.io.Files;
-import org.openqa.selenium.ElementNotVisibleException;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.NoSuchFrameException;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.UnhandledAlertException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.internal.WrapsDriver;
 import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.ErrorHandler.UnknownServerException;
 import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMException;
@@ -260,7 +252,7 @@ public final class WebDriverBackedEmbeddedBrowser implements EmbeddedBrowser {
 		try {
 			browser.navigate().to(url.toString());
 			Thread.sleep(this.crawlWaitReload);
-			handlePopups();
+			handlePopupsUsingWebDriver();
 		} catch (WebDriverException e) {
 			throwIfConnectionException(e);
 			return;
@@ -277,9 +269,24 @@ public final class WebDriverBackedEmbeddedBrowser implements EmbeddedBrowser {
 	private void handlePopups() {
 		try {
 			executeJavaScript("window.alert = function(msg){return true;};"
-			        + "window.confirm = function(msg){return true;};"
-			        + "window.prompt = function(msg){return true;};");
+					+ "window.confirm = function(msg){return true;};"
+					+ "window.prompt = function(msg){return true;};");
 		} catch (CrawljaxException e) {
+			LOGGER.error("Handling of PopUp windows failed", e);
+		}
+	}
+
+	/**
+	 * alert, prompt, and confirm behave as if the OK button is always clicked.
+	 */
+	private void handlePopupsUsingWebDriver() {
+		try {
+			WebDriverWait wait = new WebDriverWait(browser, 2);
+			wait.until(ExpectedConditions.alertIsPresent());
+			browser.switchTo().alert().accept();
+		} catch (TimeoutException e) {
+			// ignore timeouts
+		} catch (Exception e) {
 			LOGGER.error("Handling of PopUp windows failed", e);
 		}
 	}
