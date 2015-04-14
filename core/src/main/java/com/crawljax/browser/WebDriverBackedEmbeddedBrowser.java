@@ -849,6 +849,11 @@ public final class WebDriverBackedEmbeddedBrowser implements EmbeddedBrowser {
 		}
 	}
 
+	@Override
+	public void deleteAllCookies() {
+		browser.manage().deleteAllCookies();
+	}
+
 	private void removeCanvasGeneratedByFirefoxDriverForScreenshots() {
 		String js = "";
 		js += "var canvas = document.getElementById('fxdriver-screenshot-canvas');";

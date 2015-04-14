@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import com.crawljax.util.DBSnapshotRestore;
+import com.crawljax.util.MySQLSnapshotRestore;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchElementException;
 import org.slf4j.Logger;
@@ -64,6 +66,8 @@ public class Crawler {
 	private CrawlPath crawlpath;
 	private StateMachine stateMachine;
 
+	private final DBSnapshotRestore dbSnapshotRestore;
+
 	@Inject
 	Crawler(CrawlerContext context, CrawljaxConfiguration config,
 	        StateComparator stateComparator, UnfiredCandidateActions candidateActionCache,
@@ -85,6 +89,8 @@ public class Crawler {
 		this.waitConditionChecker = waitConditionChecker;
 		this.candidateExtractor = elementExtractor.newExtractor(browser);
 		this.formHandler = formHandlerFactory.newFormHandler(browser);
+
+		this.dbSnapshotRestore = new MySQLSnapshotRestore("root", "12345", "wordpress");
 	}
 
 	/**
@@ -98,6 +104,12 @@ public class Crawler {
 	 * Reset the crawler to its initial state.
 	 */
 	public void reset() {
+		// reset DB to initial state
+		dbSnapshotRestore.restore();
+
+		// delete all browser cookies to force re-login
+		browser.deleteAllCookies();
+
 		CrawlSession sess = context.getSession();
 		if (crawlpath != null) {
 			sess.addCrawlPath(crawlpath);
@@ -438,6 +450,8 @@ public class Crawler {
 	 */
 	public StateVertex crawlIndex() {
 		LOG.debug("Setting up vertex of the index page");
+
+		dbSnapshotRestore.takeSnapshot();
 
 		if (basicAuthUrl != null) {
 			browser.goToUrl(basicAuthUrl);

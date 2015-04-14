@@ -163,4 +163,9 @@ public interface EmbeddedBrowser {
 	 */
 	byte[] getScreenShot() throws CrawljaxException;
 
+	/**
+	 * deletes all cookies stored in the current webdriver.
+	 */
+	void deleteAllCookies();
+
 }

@@ -3,27 +3,24 @@ package com.crawljax.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.MessageFormat;
 
 /**
  * Uses mysqlhotcopy internally to snapshot and restore MySQL db.
- *
+ * <p/>
  * This class depends on the user running the application to have sudoer access
  * and does not need to provide password. This can be done by adding,
- *  username ALL=(ALL) NOPASSWD: ALL
+ * username ALL=(ALL) NOPASSWD: ALL
  * to sudoers file by running visudo.
  */
 public class MySQLSnapshotRestore implements DBSnapshotRestore {
-
-    public static MySQLSnapshotRestore initialize(String username, String password, String dbname) {
-        return new MySQLSnapshotRestore(username, password, dbname);
-    }
 
     private String username;
     private String password;
     private String dbname;
 
-    private MySQLSnapshotRestore(String username, String password, String dbname) {
+    public MySQLSnapshotRestore(String username,
+                                String password,
+                                String dbname) {
         this.username = username;
         this.password = password;
         this.dbname = dbname;
@@ -33,6 +30,11 @@ public class MySQLSnapshotRestore implements DBSnapshotRestore {
     public void takeSnapshot() {
         String line = null;
         try {
+            // overwrites previous snapshot.
+            new ProcessBuilder(
+                    "sudo", "rm", "-rf", "/tmp/" + dbname)
+                    .start();
+
             Process p = new ProcessBuilder(
                     "sudo", "/usr/bin/mysqlhotcopy", "-u", username, "-p", password, dbname, "/tmp")
                     .start();
@@ -66,7 +68,7 @@ public class MySQLSnapshotRestore implements DBSnapshotRestore {
 
             // Moves backed up data.
             p = new ProcessBuilder(
-                    "sudo", "mv", "/tmp/" + dbname, "/var/lib/mysql/" + dbname)
+                    "sudo", "cp", "-r", "--preserve=mode,ownership", "/tmp/" + dbname, "/var/lib/mysql/")
                     .start();
             p.waitFor();
 
